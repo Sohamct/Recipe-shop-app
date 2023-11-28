@@ -34,6 +34,11 @@ export class RecipeDetailComponent implements OnInit{
     // both are same
     this.router.navigate(['../', this.id, 'edit'], {relativeTo: this.route})
   }
+  onDeleteRecipe(){
+    this.recipeService.deleteRecipe(this.id);
+    this.router.navigate(['recipes']) // or
+    //this.router.navigate(['../../'], {relativeTo: this.route})
+  }
   
 }
 // if we are using our own observable then we have to clean up the unsbscribe it, (cleanup)
