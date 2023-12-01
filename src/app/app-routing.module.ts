@@ -1,31 +1,19 @@
-import { RouterModule, Routes } from "@angular/router";
-import { AppComponent } from "./app.component";
-import { ShoppingListComponent } from "./shopping-list/shopping-list.component";
+import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
 import { NgModule } from "@angular/core";
-import { RecipesComponent } from "./recipes/recipes.component";
-import { RecipeStartComponent } from "./recipes/recipe-start/recipe-start.component";
-import { RecipeDetailComponent } from "./recipes/recipe-detail/recipe-detail.component";
-import { RecipeEditComponent } from "./recipes/recipe-edit/recipe-edit.component";
-import { RecipesResolverService } from "./recipes/recipe-resolver.service";
-import { AuthComponent } from "./auth/auth.component";
-import { AuthGuard } from "./auth/auth.guard";
+
 
 const appRoute : Routes = [
     {path: '', redirectTo: '/recipes', pathMatch: 'full'},
-    {path: 'recipes', component: RecipesComponent, canActivate: [AuthGuard],children: [
-        {path: '', component: RecipeStartComponent},
-        {path: 'new', component: RecipeEditComponent},
-        {path: ':id', component: RecipeDetailComponent, resolve: [RecipesResolverService]}, // dynamic routes must be after stattic parameter(new) otherwise angular will consider (id=new)
-        {path: ':id/edit', component: RecipeEditComponent, resolve: [RecipesResolverService]},
-
-    ]},
-    {path: 'shopping-list', component: ShoppingListComponent},
-    {path: 'auth', component: AuthComponent},
+    {path: 'recipes', loadChildren: ()=> import('./recipes/recipes.module').then(m => m.RecipesModule)}, // please only load module where i am pointing to using loadChildren(lazy loading) // restart server
+    {path: 'shopping-list', loadChildren: ()=> import('./shopping-list/shopping-list.module').then(m => m.ShoppingListModule)}, // lazy loading ShoppingList
+    {path: 'auth', loadChildren: ()=> import('./auth/auth.module').then(m => m.AuthModule)}
 ]
+//since loadChild inclueds RecipesModule it should be not import into app.module.ts
 @NgModule({
     imports: [
-        RouterModule.forRoot(appRoute )
-    ],
+        RouterModule.forRoot(appRoute , {preloadingStrategy: PreloadAllModules}) // can use forRoot only once in app
+    ], // preloading means, when required module is loaded to by browser, then after all lazyloading module will be laoded before parcular request for a module a arrived.(preloading lazyloading module in ideal time)(for optimizing lazy loading)
+
     exports: [
         RouterModule
     ]

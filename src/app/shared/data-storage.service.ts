@@ -5,8 +5,8 @@ import { RecipeService } from "../recipes/recipe.service";
 import { exhaustMap, map, take, tap } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 
-@Injectable({providedIn: 'root'})
-export class DataStorageService  {
+@Injectable({providedIn: 'root'}) // by providIn, this servicce will be used by application-wide and don't need to specify in app.module.ts
+export class DataStorageService  { 
 
     constructor(private http: HttpClient,
         private recipeService: RecipeService,
